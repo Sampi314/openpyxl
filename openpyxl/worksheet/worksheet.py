@@ -122,6 +122,7 @@ class Worksheet(_WorkbookChild):
         self.merged_cells = MultiCellRange()
         self._tables = TableList()
         self._pivots = []
+        self._slicers = []
         self.data_validations = DataValidationList()
         self._hyperlinks = []
         self.sheet_state = 'visible'
@@ -589,6 +590,10 @@ class Worksheet(_WorkbookChild):
 
     def add_pivot(self, pivot):
         self._pivots.append(pivot)
+
+
+    def add_slicer(self, slicer):
+        self._slicers.append(slicer)
 
 
     def merge_cells(self, range_string=None, start_row=None, start_column=None, end_row=None, end_column=None):

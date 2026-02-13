@@ -133,6 +133,12 @@ class WorkbookWriter:
         #self.wb._pivots = [] # reset
 
 
+    def write_connections(self):
+        if self.wb.connections.connection:
+            rel = Relationship(type="connections", Target="connections.xml")
+            self.rels.append(rel)
+
+
     def write_views(self):
         active = get_active_sheet(self.wb)
         if self.wb.views:
@@ -147,6 +153,7 @@ class WorkbookWriter:
         self.write_worksheets()
         self.write_names()
         self.write_pivots()
+        self.write_connections()
         self.write_views()
         self.write_refs()
 

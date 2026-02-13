@@ -48,6 +48,7 @@ class ExcelWriter:
         self._drawings = []
         self._comments = []
         self._pivots = []
+        self._slicer_count = 0
 
 
     def write_data(self):
@@ -80,6 +81,10 @@ class ExcelWriter:
         self._write_charts()
 
         self._write_external_links()
+
+        if self.workbook.connections.connection:
+            self._archive.writestr("xl/connections.xml", tostring(self.workbook.connections.to_tree()))
+            self.manifest.append(self.workbook.connections)
 
         stylesheet = write_stylesheet(self.workbook)
         archive.writestr(ARC_STYLE, tostring(stylesheet))
@@ -247,6 +252,14 @@ class ExcelWriter:
                 self.workbook._pivots.append(p)
                 r = Relationship(Type=p.rel_type, Target=p.path)
                 ws._rels.append(r)
+
+            for slicer in ws._slicers:
+                self._slicer_count += 1
+                slicer.id = self._slicer_count
+                self._archive.writestr(slicer.path[1:], tostring(slicer.to_tree()))
+                self.manifest.append(slicer)
+                rel = Relationship(type=slicer.rel_type, Target=slicer.path)
+                ws._rels.append(rel)
 
             if ws._rels:
                 tree = ws._rels.to_tree()
