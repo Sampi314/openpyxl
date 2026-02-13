@@ -72,13 +72,14 @@ register_namespace('cust', CUSTPROPS_NS)
 
 tostring = partial(tostring, encoding="utf-8")
 
-NS_REGEX = re.compile("({(?P<namespace>.*)})?(?P<localname>.*)")
-
 def localname(node):
+    """
+    Extract the local name from an ElementTree tag.
+    Performance optimization: rpartition is significantly faster than regex for this.
+    """
     if callable(node.tag):
         return "comment"
-    m = NS_REGEX.match(node.tag)
-    return m.group('localname')
+    return node.tag.rpartition('}')[-1]
 
 
 def whitespace(node):
