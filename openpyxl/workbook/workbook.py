@@ -30,6 +30,7 @@ from openpyxl.styles.table import TableStyleList
 
 from openpyxl.chartsheet import Chartsheet
 from .defined_name import DefinedName, DefinedNameDict
+from .external_data import ConnectionList
 from openpyxl.packaging.core import DocumentProperties
 from openpyxl.packaging.custom import CustomPropertyList
 from openpyxl.packaging.relationship import RelationshipList
@@ -62,6 +63,7 @@ class Workbook:
                  ):
         self._sheets = []
         self._pivots = []
+        self.connections = ConnectionList()
         self._active_sheet_index = 0
         self.defined_names = DefinedNameDict()
         self._external_links = []

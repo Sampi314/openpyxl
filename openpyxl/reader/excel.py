@@ -37,6 +37,7 @@ from openpyxl.comments.comment_sheet import CommentSheet
 
 from .strings import read_string_table, read_rich_text
 from .workbook import WorkbookParser
+from openpyxl.workbook.external_data import ConnectionList
 from openpyxl.styles.stylesheet import apply_stylesheet
 
 from openpyxl.packaging.core import DocumentProperties
@@ -53,6 +54,7 @@ from openpyxl.worksheet._read_only import ReadOnlyWorksheet
 from openpyxl.worksheet._reader import WorksheetReader
 from openpyxl.chartsheet import Chartsheet
 from openpyxl.worksheet.table import Table
+from openpyxl.worksheet.slicer import Slicer
 from openpyxl.drawing.spreadsheet_drawing import SpreadsheetDrawing
 
 from openpyxl.xml.functions import fromstring
@@ -187,6 +189,13 @@ class ExcelReader:
             self.wb.loaded_theme = self.archive.read(ARC_THEME)
 
 
+    def read_connections(self):
+        if "xl/connections.xml" in self.valid_files:
+            src = self.archive.read("xl/connections.xml")
+            node = fromstring(src)
+            self.wb.connections = ConnectionList.from_tree(node)
+
+
     def read_chartsheet(self, sheet, rel):
         sheet_path = rel.target
         rels_path = get_rels_path(sheet_path)
@@ -280,6 +289,13 @@ class ExcelReader:
                 pivot.cache = pivot_caches[pivot.cacheId]
                 ws.add_pivot(pivot)
 
+            slicer_rel_type = "http://schemas.microsoft.com/office/2007/relationships/slicer"
+            for r in rels.find(slicer_rel_type):
+                src = self.archive.read(r.target)
+                tree = fromstring(src)
+                slicer = Slicer.from_tree(tree)
+                ws.add_slicer(slicer)
+
             ws.sheet_state = sheet.state
 
 
@@ -297,6 +313,8 @@ class ExcelReader:
             self.read_custom()
             action = "read theme"
             self.read_theme()
+            action = "read connections"
+            self.read_connections()
             action = "read stylesheet"
             apply_stylesheet(self.archive, self.wb)
             action = "read worksheets"

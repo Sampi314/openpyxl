@@ -46,6 +46,26 @@ Sample code::
     # Save the file
     wb.save("sample.xlsx")
 
+Advanced Features
+-----------------
+
+openpyxl now supports advanced Excel features such as:
+
+* **Slicers**: Read and write slicer structures.
+* **Data Connections**: Support for external data connections (Power Query, Power Pivot).
+* **Tables and Pivot Tables**: Enhanced support for these logical constructs.
+
+Example of adding a data connection::
+
+    from openpyxl import Workbook
+    from openpyxl.workbook.external_data import Connection, DatabaseProperties
+
+    wb = Workbook()
+    db_pr = DatabaseProperties(connection="Data Source=external_database.xlsx")
+    conn = Connection(id=1, name="MyExternalData", dbPr=db_pr)
+    wb.connections.connection.append(conn)
+    wb.save("data_with_connection.xlsx")
+
 
 Documentation
 -------------
