@@ -1,6 +1,7 @@
 # Copyright (c) 2010-2024 openpyxl
 
 import re
+from functools import lru_cache
 
 from openpyxl.descriptors import (
     String,
@@ -101,6 +102,7 @@ TIMEDELTA_RE = re.compile(r'\[hh?\](:mm(:ss(\.0*)?)?)?|\[mm?\](:ss(\.0*)?)?|\[ss
 # Spec 18.8.31 numFmts
 # +ve;-ve;zero;text
 
+@lru_cache(maxsize=128)
 def is_date_format(fmt):
     if fmt is None:
         return False
@@ -109,6 +111,7 @@ def is_date_format(fmt):
     return re.search(r"(?<![_\\])[dmhysDMHYS]", fmt) is not None
 
 
+@lru_cache(maxsize=128)
 def is_timedelta_format(fmt):
     if fmt is None:
         return False
@@ -138,7 +141,11 @@ def is_datetime(fmt):
 
 
 def is_builtin(fmt):
-    return fmt in BUILTIN_FORMATS.values()
+    """
+    Check if a format code is one of the built-in ones.
+    Performance optimization: use BUILTIN_FORMATS_REVERSE for O(1) lookup.
+    """
+    return fmt in BUILTIN_FORMATS_REVERSE
 
 
 def builtin_format_code(index):
