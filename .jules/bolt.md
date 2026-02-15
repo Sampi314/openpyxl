@@ -1,0 +1,3 @@
+## 2025-05-14 - [Format and Error Check Optimization]
+**Learning:** In openpyxl, format checks like `is_date_format` and error lookups are extremely frequent. `is_date_format` is particularly expensive as it involves regex and string substitution on every call. `is_builtin` was performing an O(n) lookup on dictionary values.
+**Action:** Use `functools.lru_cache` for expensive format checks. Ensure a `maxsize` is set to avoid unbounded memory growth. Convert constant lookup tuples to sets for O(1) membership testing. Use pre-calculated reverse dictionaries for O(1) lookups instead of iterating over dictionary values.
