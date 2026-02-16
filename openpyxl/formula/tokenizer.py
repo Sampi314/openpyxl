@@ -38,8 +38,9 @@ class Tokenizer:
         '"': re.compile('"(?:[^"]*"")*[^"]*"(?!")'),
         "'": re.compile("'(?:[^']*'')*[^']*'(?!')"),
     }
-    ERROR_CODES = ("#NULL!", "#DIV/0!", "#VALUE!", "#REF!", "#NAME?",
-                   "#NUM!", "#N/A", "#GETTING_DATA")
+    # Performance optimization: use frozenset for O(1) membership lookup.
+    ERROR_CODES = frozenset(("#NULL!", "#DIV/0!", "#VALUE!", "#REF!", "#NAME?",
+                   "#NUM!", "#N/A", "#GETTING_DATA"))
     TOKEN_ENDERS = ',;}) +-*/^&=><%'  # Each of these characters, marks the
                                        # end of an operand token
 

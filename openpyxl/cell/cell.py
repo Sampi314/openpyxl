@@ -43,8 +43,9 @@ STRING_TYPES = (str, bytes, CellRichText)
 KNOWN_TYPES = NUMERIC_TYPES + TIME_TYPES + STRING_TYPES + (bool, type(None))
 
 ILLEGAL_CHARACTERS_RE = re.compile(r'[\000-\010]|[\013-\014]|[\016-\037]')
-ERROR_CODES = ('#NULL!', '#DIV/0!', '#VALUE!', '#REF!', '#NAME?', '#NUM!',
-               '#N/A')
+# Performance optimization: use frozenset for O(1) membership lookup.
+ERROR_CODES = frozenset(('#NULL!', '#DIV/0!', '#VALUE!', '#REF!', '#NAME?', '#NUM!',
+               '#N/A'))
 
 TYPE_STRING = 's'
 TYPE_FORMULA = 'f'
