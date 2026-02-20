@@ -43,8 +43,8 @@ STRING_TYPES = (str, bytes, CellRichText)
 KNOWN_TYPES = NUMERIC_TYPES + TIME_TYPES + STRING_TYPES + (bool, type(None))
 
 ILLEGAL_CHARACTERS_RE = re.compile(r'[\000-\010]|[\013-\014]|[\016-\037]')
-ERROR_CODES = ('#NULL!', '#DIV/0!', '#VALUE!', '#REF!', '#NAME?', '#NUM!',
-               '#N/A')
+ERROR_CODES = frozenset(('#NULL!', '#DIV/0!', '#VALUE!', '#REF!', '#NAME?', '#NUM!',
+               '#N/A'))
 
 TYPE_STRING = 's'
 TYPE_FORMULA = 'f'
@@ -198,6 +198,7 @@ class Cell(StyleableObject):
             if len(value) > 1 and value.startswith("="):
                 self.data_type = 'f'
             elif value in ERROR_CODES:
+                # Performance: ERROR_CODES is a frozenset for O(1) lookup
                 self.data_type = 'e'
 
         self._value = value
