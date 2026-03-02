@@ -35,9 +35,16 @@ class IndexedList(list):
         return value in self._dict
 
     def index(self, value):
-        if value in self:
+        """
+        Return the index of a value.
+        Performance optimization: use single lookup with try-except.
+        """
+        if not self.clean:
+            self._rebuild_dict()
+        try:
             return self._dict[value]
-        raise ValueError
+        except KeyError:
+            raise ValueError
 
     def append(self, value):
         if value not in self._dict:
@@ -45,5 +52,14 @@ class IndexedList(list):
             list.append(self, value)
 
     def add(self, value):
-        self.append(value)
-        return self._dict[value]
+        """
+        Add a value to the list and return its index.
+        Performance optimization: use .get() for single lookup.
+        """
+        idx = self._dict.get(value)
+        if idx is not None:
+            return idx
+        idx = len(self)
+        self._dict[value] = idx
+        list.append(self, value)
+        return idx
