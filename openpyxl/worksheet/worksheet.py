@@ -253,14 +253,16 @@ class Worksheet(_WorkbookChild):
         """
         Internal method for getting a cell from a worksheet.
         Will create a new cell if one doesn't already exist.
+        Performance optimization: use dict.get() for single lookup and defer validation.
         """
-        if not 0 < row < 1048577:
-            raise ValueError(f"Row numbers must be between 1 and 1048576. Row number supplied was {row}")
         coordinate = (row, column)
-        if not coordinate in self._cells:
+        cell = self._cells.get(coordinate)
+        if cell is None:
+            if not 0 < row < 1048577:
+                raise ValueError(f"Row numbers must be between 1 and 1048576. Row number supplied was {row}")
             cell = Cell(self, row=row, column=column)
             self._add_cell(cell)
-        return self._cells[coordinate]
+        return cell
 
 
     def _add_cell(self, cell):
