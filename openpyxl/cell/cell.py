@@ -43,8 +43,9 @@ STRING_TYPES = (str, bytes, CellRichText)
 KNOWN_TYPES = NUMERIC_TYPES + TIME_TYPES + STRING_TYPES + (bool, type(None))
 
 ILLEGAL_CHARACTERS_RE = re.compile(r'[\000-\010]|[\013-\014]|[\016-\037]')
-ERROR_CODES = ('#NULL!', '#DIV/0!', '#VALUE!', '#REF!', '#NAME?', '#NUM!',
-               '#N/A')
+# Use frozenset for O(1) membership checks of error codes
+ERROR_CODES = frozenset(('#NULL!', '#DIV/0!', '#VALUE!', '#REF!', '#NAME?', '#NUM!',
+               '#N/A'))
 
 TYPE_STRING = 's'
 TYPE_FORMULA = 'f'
@@ -59,7 +60,8 @@ VALID_TYPES = (TYPE_STRING, TYPE_FORMULA, TYPE_NUMERIC, TYPE_BOOL,
                TYPE_NULL, TYPE_INLINE, TYPE_ERROR, TYPE_FORMULA_CACHE_STRING)
 
 
-_TYPES = {int:'n', float:'n', str:'s', bool:'b'}
+# Pre-populate _TYPES with NoneType to avoid calling get_type() for empty cells
+_TYPES = {int: 'n', float: 'n', str: 's', bool: 'b', type(None): 'n'}
 
 
 def get_type(t, value):
