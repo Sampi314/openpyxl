@@ -1,0 +1,3 @@
+## 2025-05-14 - Pre-populating type caches and using frozensets for constants
+**Learning:** Pre-populating lookup tables for common types (like `None`) in hot paths like cell value binding can significantly reduce overhead by avoiding `KeyError` exceptions and redundant `isinstance` checks. Additionally, converting small constant tuples to `frozenset` provides (1)$ lookup performance, which is measurable in tight loops.
+**Action:** Always check for frequently used type-check logic that can be replaced with a dictionary lookup, and ensure constant collections used for membership tests are sets or frozensets.
