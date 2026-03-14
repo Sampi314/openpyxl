@@ -35,12 +35,9 @@ class IndexedList(list):
         return value in self._dict
 
     def index(self, value):
-        if not self.clean:
-            self._rebuild_dict()
-        try:
+        if value in self:
             return self._dict[value]
-        except KeyError:
-            raise ValueError
+        raise ValueError
 
     def append(self, value):
         if value not in self._dict:
@@ -48,14 +45,5 @@ class IndexedList(list):
             list.append(self, value)
 
     def add(self, value):
-        if not self.clean:
-            self._rebuild_dict()
-
-        idx = self._dict.get(value)
-        if idx is not None:
-            return idx
-
-        idx = len(self)
-        self._dict[value] = idx
-        list.append(self, value)
-        return idx
+        self.append(value)
+        return self._dict[value]
