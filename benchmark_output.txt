@@ -1,0 +1,2 @@
+Time to access 10,000 existing cells 100 times: 0.5761s
+Average time per access: 0.5761us
