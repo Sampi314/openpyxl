@@ -59,7 +59,9 @@ VALID_TYPES = (TYPE_STRING, TYPE_FORMULA, TYPE_NUMERIC, TYPE_BOOL,
                TYPE_NULL, TYPE_INLINE, TYPE_ERROR, TYPE_FORMULA_CACHE_STRING)
 
 
-_TYPES = {int:'n', float:'n', str:'s', bool:'b'}
+# Pre-populate _TYPES to avoid KeyError and redundant type checking for common types.
+# Binding None is particularly common and previously triggered a KeyError every time.
+_TYPES = {int:'n', float:'n', str:'s', bool:'b', type(None): 'n'}
 
 
 def get_type(t, value):
